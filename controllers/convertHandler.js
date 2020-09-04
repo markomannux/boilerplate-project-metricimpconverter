@@ -6,10 +6,42 @@
 *       
 */
 
+const acceptedUnits = [
+  'gal',
+  'L',
+  'lbs',
+  'kg',
+  'mi',
+  'km'
+]
+
 function ConvertHandler() {
   
   this.getNum = function(input) {
     var result;
+    let match = /[a-zA-Z]/.exec(input);
+    if (match) {
+      result = input.substring(0, match.index);
+    }
+
+    if (!result) {
+      return 1;
+    }
+
+    if (result.indexOf('/') != -1) {
+      let operands = result.split('/');
+
+      if (operands.length != 2) {
+        console.log('throwing error');
+        throw new Error('invalid number');
+      }
+      result = parseFloat(operands[0]) / parseFloat(operands[1]);
+    }
+    else if (result.indexOf('.') != -1) {
+      result = parseFloat(input);
+    } else {
+      result = parseFloat(input);
+    }
     
     return result;
   };
