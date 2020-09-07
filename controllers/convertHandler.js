@@ -18,7 +18,7 @@ const acceptedUnits = [
 function ConvertHandler() {
   
   this.getNum = function(input) {
-    var result;
+    let result;
     let match = /[a-zA-Z]/.exec(input);
     
     if (match) {
@@ -27,23 +27,16 @@ function ConvertHandler() {
       throw new Error('invalid input');
     }
 
-    let numerator;
-    let denominator;
     let operands = result.split('/');
 
     if (operands.length > 2) {
       throw new Error('invalid number');
     }
 
-    if (operands.length >= 1) {
-      numerator = parseFloat(operands[0]);
-    }
-    
-    if (operands.length == 2) {
-      denominator = parseFloat(operands[1]);
-    }
+    const numerator = parseFloat(operands[0]) || 1;
+    const denominator = parseFloat(operands[1]) || 1;
 
-    result = (numerator||1) / (denominator||1)
+    result = numerator / denominator
     
     return result;
   };
