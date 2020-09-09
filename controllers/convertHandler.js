@@ -36,6 +36,11 @@ function ConvertHandler() {
   function extractOperands(input, matchIndex) {
     const operands = input.substring(0, matchIndex).split('/');
     if (operands.length > 2) {
+      try {
+        extractUnit(input);
+      } catch(err) {
+        throw new Error('invalid number and unit');
+      }
       throw new Error('invalid number');
     }
 
@@ -43,33 +48,38 @@ function ConvertHandler() {
   }
   
   this.getUnit = function(input) {
-    var result;
-    
+    return extractUnit(input);
+  };
+
+  function extractUnit(input) {
     result = input.substring(findUnitIndex(input));
     if (fromUnit.indexOf(result.toLowerCase()) === -1) {
       throw new Error('invalid unit');
     }
-    
+
     return result;
-  };
+  }
   
   this.getReturnUnit = function(initUnit) {
-    return toUnit[fromUnit.indexOf(initUnit)];
+    return toUnit[fromUnit.indexOf(initUnit.toLowerCase())];
   };
 
   this.spellOutUnit = function(unit) {
-    return extendedUnit[fromUnit.indexOf(unit)];
+    return extendedUnit[fromUnit.indexOf(unit.toLowerCase())];
   };
   
   this.convert = function(initNum, initUnit) {
-
-    var result = initNum * conversions[fromUnit.indexOf(initUnit)]
-  
-    return result;
+    let result = initNum * conversions[fromUnit.indexOf(initUnit.toLowerCase())]
+    return roundOff(result, 5);
   };
+
+  function roundOff(num, places) {
+    const x = Math.pow(10, places);
+    return Math.round(num * x) / x;
+  }
   
   this.getString = function(initNum, initUnit, returnNum, returnUnit) {
-    var result;
+    var result = `${initNum} ${this.spellOutUnit(initUnit)} converts to ${returnNum} ${this.spellOutUnit(returnUnit)}`
     
     return result;
   };

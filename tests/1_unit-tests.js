@@ -79,6 +79,7 @@ suite('Unit Tests', function(){
       var expect = ['l','gal','km','mi','kg','lbs'];
       input.forEach(function(ele, i) {
         assert.equal(convertHandler.getReturnUnit(ele), expect[i]);
+        assert.equal(convertHandler.getReturnUnit(ele.toUpperCase()), expect[i]);
       });
       done();
     });
@@ -92,6 +93,8 @@ suite('Unit Tests', function(){
       var expect = ['gallons', 'liters', 'miles', 'kilometers', 'pounds', 'kilograms'];
       input.forEach(function(ele, i) {
         assert.equal(convertHandler.spellOutUnit(ele), expect[i]);
+        assert.equal(convertHandler.spellOutUnit(ele.toUpperCase()), expect[i]);
+
       });
       done();
     });
@@ -104,6 +107,10 @@ suite('Unit Tests', function(){
       var input = [5, 'gal'];
       var expected = 18.9271;
       assert.approximately(convertHandler.convert(input[0],input[1]),expected,0.1); //0.1 tolerance
+      var input = [5, 'GAL'];
+      var expected = 18.9271;
+      assert.approximately(convertHandler.convert(input[0],input[1]),expected,0.1); //0.1 tolerance
+      
       done();
     });
     
@@ -142,6 +149,23 @@ suite('Unit Tests', function(){
       done();
     });
     
+  });
+
+  suite('Function convertHandler.getString(initNum, initUnit, returnNum, returnUnit)', function() {
+    test('getString', function(done) {
+      var input = [5, 'kg', 11.02312, 'lbs']
+      var expected = '5 kilograms converts to 11.02312 pounds';
+      assert.equal(convertHandler.getString(input[0], input[1], input[2], input[3]),  expected);
+      done();
+    });
+  });
+
+  suite('Function convertHandler.getNum(input) addendum', function() {
+    test('Invalid number and unit', function(done) {
+      var input = '3/7.2/4kilomegagram';
+      assert.throws(convertHandler.getNum.bind(convertHandler.getNum, input), 'invalid number and unit');
+      done();
+    });
   });
 
 });
