@@ -67,6 +67,10 @@
             success: function(data) {
               $('#result').text(data.string || data);
               $('#jsonResult').text(JSON.stringify(data));
+            },
+            error: function(data) {
+              $('#result').text(`Error - ${$('#convertForm').serialize()}`);
+              $('#jsonResult').text(JSON.stringify(data));
             }
           });
         });
