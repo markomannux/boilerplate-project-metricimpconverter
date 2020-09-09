@@ -68,9 +68,9 @@
               $('#result').text(data.string || data);
               $('#jsonResult').text(JSON.stringify(data));
             },
-            error: function(data) {
+            error: function(error) {
               $('#result').text(`Error - ${$('#convertForm').serialize()}`);
-              $('#jsonResult').text(JSON.stringify(data));
+              $('#jsonResult').text(error.responseText);
             }
           });
         });
