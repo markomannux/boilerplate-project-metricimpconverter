@@ -6,65 +6,65 @@
 *       
 */
 
-const acceptedUnits = [
-  'gal',
-  'L',
-  'lbs',
-  'kg',
-  'mi',
-  'km'
-]
+const { json } = require("body-parser")
+
+const fromUnit = ['gal','l','mi','km','lbs','kg'];
+const toUnit = ['l','gal','km','mi','kg','lbs'];
+const extendedUnit = ['gallons', 'liters', 'miles', 'kilometers', 'pounds', 'kilograms'];
+const galToL = 3.78541;
+const lbsToKg = 0.453592;
+const miToKm = 1.60934;
+
+const conversions = [galToL,1/galToL,miToKm,1/miToKm,lbsToKg,1/lbsToKg];
 
 function ConvertHandler() {
   
   this.getNum = function(input) {
-    let result;
-    let match = /[a-zA-Z]/.exec(input);
-    
-    if (match) {
-      result = input.substring(0, match.index);
-    } else {
+    const operands = extractOperands(input, findUnitIndex(input));
+    return new CoalescingFraction(operands[0], operands[1]).value();
+  };
+
+  function findUnitIndex(input) {
+    const match = /[a-zA-Z]/.exec(input);
+    if (!match) {
       throw new Error('invalid input');
     }
 
-    let operands = result.split('/');
+    return match.index;
+  }
 
+  function extractOperands(input, matchIndex) {
+    const operands = input.substring(0, matchIndex).split('/');
     if (operands.length > 2) {
       throw new Error('invalid number');
     }
 
-    const numerator = parseFloat(operands[0]) || 1;
-    const denominator = parseFloat(operands[1]) || 1;
-
-    result = numerator / denominator
-    
-    return result;
-  };
+    return operands;
+  }
   
   this.getUnit = function(input) {
     var result;
+    
+    result = input.substring(findUnitIndex(input));
+    if (fromUnit.indexOf(result.toLowerCase()) === -1) {
+      throw new Error('invalid unit');
+    }
     
     return result;
   };
   
   this.getReturnUnit = function(initUnit) {
-    var result;
-    
-    return result;
+    return toUnit[fromUnit.indexOf(initUnit)];
   };
 
   this.spellOutUnit = function(unit) {
-    var result;
-    
-    return result;
+    return extendedUnit[fromUnit.indexOf(unit)];
   };
   
   this.convert = function(initNum, initUnit) {
-    const galToL = 3.78541;
-    const lbsToKg = 0.453592;
-    const miToKm = 1.60934;
-    var result;
-    
+
+    var result = initNum * conversions[fromUnit.indexOf(initUnit)]
+  
     return result;
   };
   
@@ -74,6 +74,17 @@ function ConvertHandler() {
     return result;
   };
   
+}
+
+function CoalescingFraction(numerator, denominator) {
+
+  function parseAndCoalesceTo(value, coalesceTo) {
+    return parseFloat(value) || coalesceTo
+  }
+
+  this.value = function() {
+    return parseAndCoalesceTo(numerator, 1) / parseAndCoalesceTo(denominator, 1);
+  }
 }
 
 module.exports = ConvertHandler;
